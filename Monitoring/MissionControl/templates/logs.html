@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Files</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        h1 {
+            color: #e0e0e0;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        .date-section {
+            margin: 20px 0;
+        }
+        .date-header {
+            background-color: #333;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            color: #e0e0e0;
+        }
+        .date-header:hover {
+            background-color: #444;
+        }
+        .files-container {
+            display: none;
+            padding: 10px 20px;
+        }
+        .files-container.active {
+            display: block;
+        }
+        .file-link {
+            display: block;
+            padding: 5px 0;
+            color: #66b2ff;
+            text-decoration: none;
+        }
+        .file-link:hover {
+            text-decoration: underline;
+        }
+        #content-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #333;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            max-width: 80%;
+            max-height: 80vh;
+            overflow: auto;
+            color: #e0e0e0;
+        }
+        #modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+        #modal-content {
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .nav-bar {
+            background-color: #333;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+        }
+        .nav-bar a {
+            color: #e0e0e0;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .nav-bar a:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-bar">
+        <a href="/">Home</a>
+        <a href="/logs">Logs</a>
+        <a href="/monitor">Monitor</a>
+        <a href="/train">Train</a>
+        <a href="/predictions">Predictions</a>
+    </div>
+
+    <h1>Logs</h1>
+    
+    {% for date, files in logs_data.items() %}
+    <div class="date-section">
+        <div class="date-header" onclick="toggleFiles(this)">
+            {{ date }}
+        </div>
+        <div class="files-container">
+            {% for file in files %}
+            <a href="#" class="file-link" 
+               onclick="showFile('{{ date }}', '{{ file }}'); return false;">
+                {{ file }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+    <div id="modal-overlay" onclick="hideModal()"></div>
+    <div id="content-modal">
+        <div id="modal-content"></div>
+    </div>
+
+    <script>
+        function toggleFiles(header) {
+            const container = header.nextElementSibling;
+            container.classList.toggle('active');
+        }
+
+        function showFile(date, filename) {
+            fetch(`/logs/${date}/${filename}`)
+                .then(response => {
+                    if (filename.endsWith('.png')) {
+                        return response.blob();
+                    }
+                    return response.text();
+                })
+                .then(content => {
+                    const modal = document.getElementById('content-modal');
+                    const modalContent = document.getElementById('modal-content');
+                    const overlay = document.getElementById('modal-overlay');
+                    
+                    if (filename.endsWith('.png')) {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(content);
+                        img.style.maxWidth = '100%';
+                        modalContent.innerHTML = '';
+                        modalContent.appendChild(img);
+                    } else {
+                        modalContent.textContent = content;
+                    }
+                    
+                    modal.style.display = 'block';
+                    overlay.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading file');
+                });
+        }
+
+        function hideModal() {
+            const modal = document.getElementById('content-modal');
+            const overlay = document.getElementById('modal-overlay');
+            modal.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

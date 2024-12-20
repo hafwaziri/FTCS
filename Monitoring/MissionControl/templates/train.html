@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Control Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        h1 {
+            color: #e0e0e0;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        .control-panel {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #444;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .section h3 {
+            margin-top: 0;
+            color: #e0e0e0;
+        }
+        .radio-group {
+            display: flex;
+            gap: 20px;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .status.success {
+            background-color: #155724;
+            color: #d4edda;
+        }
+        .status.error {
+            background-color: #721c24;
+            color: #f8d7da;
+        }
+        .help-text {
+            font-size: 0.9em;
+            color: #e0e0e0;
+            margin-top: 5px;
+        }
+        input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 300px;
+            background-color: #333;
+            color: #e0e0e0;
+        }
+        .nav-bar {
+            background-color: #333;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+        }
+        .nav-bar a {
+            color: #e0e0e0;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .nav-bar a:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-bar">
+        <a href="/">Home</a>
+        <a href="/logs">Logs</a>
+        <a href="/monitor">Monitor</a>
+        <a href="/train">Train</a>
+        <a href="/predictions">Predictions</a>
+    </div>
+
+    <h1>Training Control Panel</h1>
+    
+    <div class="control-panel">
+        <div class="section">
+            <h3>Data Operation</h3>
+            <div class="radio-group">
+                <label class="radio-option">
+                    <input type="radio" name="data_operation" value="df">
+                    Fetch & Preprocess Data
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="data_operation" value="pp">
+                    Preprocess Only
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="data_operation" value="d" checked>
+                    No Operation
+                </label>
+            </div>
+            <p class="help-text">Select the data operation to perform before training</p>
+        </div>
+
+        <div class="section">
+            <h3>Training Type</h3>
+            <div class="radio-group">
+                <label class="radio-option">
+                    <input type="radio" name="training_type" value="cpu">
+                    CPU Training
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="training_type" value="gpu">
+                    GPU Training
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="training_type" value="d" checked>
+                    No Training
+                </label>
+            </div>
+            <p class="help-text">Select the type of training to perform</p>
+        </div>
+
+        <div class="section">
+            <h3>Training Argument</h3>
+            <select id="additional_arg">
+                <option value="lr">Logistic Regression</option>
+                <option value="svm">Support Vector Machine</option>
+                <option value="rf">Random Forest</option>
+                <option value="gbm">Gradient Boosting Machine</option>
+                <option value="train">Train using all of the Algorithms</option>
+            </select>
+        </div>
+
+        <button onclick="startTraining()" id="startButton">Start Training</button>
+    </div>
+
+    <div id="status" style="display: none;"></div>
+
+    <script>
+        function startTraining() {
+            const button = document.getElementById('startButton');
+            button.disabled = true;
+            
+            const data_operation = document.querySelector('input[name="data_operation"]:checked').value;
+            const training_type = document.querySelector('input[name="training_type"]:checked').value;
+            const training_args = document.getElementById('additional_arg').value || '';
+            
+            const statusDiv = document.getElementById('status');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status';
+            statusDiv.textContent = 'Training process started...';
+            
+            fetch('/api/train', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    data_operation,
+                    training_type,
+                    training_args
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                statusDiv.textContent = data.message;
+                statusDiv.className = 'status success';
+                button.disabled = false;
+            })
+            .catch(error => {
+                statusDiv.textContent = 'Error: ' + error.message;
+                statusDiv.className = 'status error';
+                button.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>

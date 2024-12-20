@@ -1,0 +1,32 @@
+[
+
+	{
+		"ResID" : 2,
+		"ParentRes" : 0,
+		"ResBezeichnung" : "ServiceDesk",
+		"Email" : "REDACTED",
+		"geloescht" : 0,
+		"Eskalation" : 5,
+		"Stundensatz" : "0.0000",
+		"Zeit00" : null,
+		"Zeit01" : null,
+		"Zeit10" : "1970-01-01T07:30:00.000Z",
+		"Zeit11" : "1970-01-01T16:00:00.000Z",
+		"Zeit20" : "1970-01-01T07:30:00.000Z",
+		"Zeit21" : "1970-01-01T16:00:00.000Z",
+		"Zeit30" : "1970-01-01T07:30:00.000Z",
+		"Zeit31" : "1970-01-01T16:00:00.000Z",
+		"Zeit40" : "1970-01-01T07:30:00.000Z",
+		"Zeit41" : "1970-01-01T16:00:00.000Z",
+		"Zeit50" : "1970-01-01T07:30:00.000Z",
+		"Zeit51" : "1970-01-01T14:00:00.000Z",
+		"Zeit60" : null,
+		"Zeit61" : null,
+		"Msg" : 4,
+		"Rechte" : 3,
+		"MsgText" : null,
+		"MsgVon" : null,
+		"MsgBis" : null,
+		"GroupUUID" : "eobc9p9l2ap0fwvh2td7stznx"
+	}
+]

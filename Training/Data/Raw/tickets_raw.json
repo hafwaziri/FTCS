@@ -1,0 +1,25 @@
+[
+	{
+		"AufID" : 58,
+		"Auftrag" : "<html><head><style>p.hddefault { margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; }img { max-width:100%; height:auto !important; }<\/style><\/head><body style=\"font-family:Arial;font-size:10pt;\"><p style=\"margin-bottom:0px;margin-top:0px;\">Folgende Software soll installiert werden:<\/p><ul><li>Basler Pylon 6<\/li><\/ul><\/body><\/html>",
+		"UsrID" : 890,
+		"ResID" : 2,
+		"PriID" : 40,
+		"BunID" : 58,
+		"BetID" : 85,
+		"Master" : 1,
+		"EmailEingang" : null,
+		"DerBetreff" : "Software Installation: \"Basler Pylon 6\"",
+		"DeadlineZeit" : null,
+		"WFID" : null,
+		"WFStartDate" : null,
+		"spezFeld" : "REDACTED",
+		"AnfReaID" : 298,
+		"AutorisierenReaID" : null,
+		"KlaID" : 0,
+		"ItiID" : 0,
+		"ItiCount" : null,
+		"ishtml" : 1,
+		"AutoEscalated" : 0
+	}
+]

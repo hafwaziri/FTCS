@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tickets Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        h1 {
+            color: #e0e0e0;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            background-color: #333;
+            color: #e0e0e0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+        th {
+            background-color: #444;
+            color: #e0e0e0;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #2a2a2a;
+        }
+        tr:hover {
+            background-color: #444;
+        }
+        .loading {
+            text-align: center;
+            font-size: 16px;
+            color: #666;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 5px;
+        }
+        .prediction-text {
+            max-width: 400px;
+            word-wrap: break-word;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 5px;
+            border: 1px solid #444;
+        }
+        .nav-bar {
+            background-color: #333;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+        }
+        .nav-bar a {
+            color: #e0e0e0;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .nav-bar a:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-bar">
+        <a href="/">Home</a>
+        <a href="/logs">Logs</a>
+        <a href="/monitor">Monitor</a>
+        <a href="/train">Train</a>
+        <a href="/predictions">Predictions</a>
+    </div>
+
+    <h1>Tickets Dashboard</h1>
+    
+    <div class="table-container">
+        <table id="ticketsTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ticket ID</th>
+                    <th>Processed</th>
+                    <th>Prediction</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be populated by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="loading" id="loading">Loading...</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/data')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector('#ticketsTable tbody');
+                    const loading = document.getElementById('loading');
+                    loading.style.display = 'none';
+                    
+                    data.forEach(ticket => {
+                        let predictionText = '';
+                        try {
+                            const predictionObj = JSON.parse(ticket.Prediction);
+                            predictionText = `Predicted Category: ${predictionObj["Predicted Category"] || 'N/A'}, Predicted Resource: ${predictionObj["Predicted Resource"] || 'N/A'}`;
+                        } catch (e) {
+                            predictionText = 'Invalid JSON';
+                        }
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${ticket.id}</td>
+                            <td>${ticket.ticket_id}</td>
+                            <td>${ticket.Processed}</td>
+                            <td class="prediction-text">${predictionText}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    const loading = document.getElementById('loading');
+                    loading.textContent = 'Failed to load data.';
+                    loading.style.backgroundColor = '#fff0f0';
+                    loading.style.color = '#d32f2f';
+                });
+        });
+    </script>
+</body>
+</html>
