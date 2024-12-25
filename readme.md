@@ -31,8 +31,8 @@ After running setup.sh, use this script to start the server for the web interfac
 
 ##### Additional Notes:
 
-The Agent script will be added...
-A comprehensive training report and reflections on the results will also be added in the documentation...
+My blog post about the project: [Reflections On Training Machine Learning Models for Classifying IT Tickets](https://www.user.tu-berlin.de/hwaziri/blog/2024/12/20/reflections-on-training-machine-learning-models-for-classifying-it-tickets.html)
+
 
 If you're using a non-Debian OS or distribution, update the Geckodriver located in the Watchdog directory to match your specific OS/distribution.
 For permission-related issues, use the following commands:
